@@ -1,10 +1,8 @@
-
 import RPi.GPIO as GPIO
 import tkinter as tk
 
-
-GPIO.setwarnings(False)
 led_pin = 18
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(led_pin,GPIO.OUT)
 
@@ -16,6 +14,7 @@ def update(duty):
     pwm_led.ChangeDutyCycle(float(duty))
     counter=int(duty)
     var.set(str(counter))
+    scale.set(counter)
     colorchange()
 root=tk.Tk()
 root.title("PWM　Power Control")
@@ -25,6 +24,7 @@ var=tk.StringVar()
 var.set(str(counter))
 label=tk.Label(root,textvariable=var,fg='white',font=('Arial',18),width=50,height=2)
 scale=tk.Scale(root,from_=0, to=100, resolution=1, orient=tk.HORIZONTAL,command=update,length=500)
+
 
 scale.pack()
 label.pack()
@@ -58,22 +58,7 @@ def add1():
         counter=100
     else:
         counter=counter+1
-    var.set(str(counter))
-    pwm_led.ChangeDutyCycle(counter)
-    scale.set(counter)
-
-btn1=tk.Button(root,text="+1",font=('Arial',18),width=15,height=2,command=add1)
-btn1.pack(side=tk.RIGHT)
-
-def clear():
-    global counter
-    counter=0
-    var.set(str(counter))
-    pwm_led.ChangeDutyCycle(counter)
-    scale.set(counter)
-
-btn3=tk.Button(root,text="0",font=('Arial',18),width=15,height=2,command=clear)
-btn3.pack(side=tk.RIGHT)
+    update(counter)
 
 def sub1():
     global counter
@@ -81,12 +66,18 @@ def sub1():
         counter=0
     else:
         counter=counter-1
-    var.set(str(counter))
-    pwm_led.ChangeDutyCycle(counter)
-    scale.set(counter)
+    update(counter)
 
+def clear():
+    global counter
+    counter=0
+    update(counter)
+
+btn1=tk.Button(root,text="+1",font=('Arial',18),width=15,height=2,command=add1)
+btn1.pack(side=tk.RIGHT)
 btn2=tk.Button(root,text="-1",font=('Arial',18),width=15,height=2,command=sub1)
 btn2.pack(side=tk.LEFT)
+btn3=tk.Button(root,text="0",font=('Arial',18),width=15,height=2,command=clear)
+btn3.pack(side=tk.RIGHT)
 
 root.mainloop()
-
